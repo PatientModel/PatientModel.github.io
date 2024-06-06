@@ -3,14 +3,14 @@ import torch
 from flask import Flask, request, jsonify
 from transformers import  pipeline
 import random
+from flask_cors import CORS  # 确保导入 flask_cors
 
 app = Flask(__name__)
-
+CORS(app)  
 # Constants
-TEST_DATA_PATH = "/mnt/fl/projects/medguide/changye/hospital/data/test_data/formal_2_test_dataset.json"
+TEST_DATA_PATH = "/data/changye/hospital/data/test_data/formal_2_test_dataset.json"
 PATIENT_SYSTEM_PROMPT = "假设你是一个病人，你的过去病史是{input1}，你的主诉是{input2},现在你正在一位全科医生面前接受问诊,你需要根据医生的问题回答,输出时直接输出对话内容即可，请尽量避免不输出任何东西！请尽量避免不输出任何东西！请仔细了解病史，不要说你没有哪里不舒服的！"
 
-# Helper function to initialize model and data
 def init_model():
     with open(TEST_DATA_PATH, 'r', encoding='utf-8') as f:
         dataset = json.load(f)
@@ -26,7 +26,9 @@ def init_model():
     return pipe, patient_system_prompt, questions, data["chief_complaint"], data["past_history"]
 
 pipeline, patient_system_prompt, questions, chief_complaint, past_history = init_model()
-
+@app.route('/')
+def index():
+    return "Flask server is running."
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json()
@@ -44,7 +46,7 @@ def chat():
     )
     terminators = [
             pipeline.tokenizer.eos_token_id,
-            pipeline.tokenizer.convert_tokens_to_ids("<|eot_id|>")
+            pipeline.tokenizer.convert_tokens_to_ids("")
     ]
     outputs = pipeline(
             text,
@@ -75,4 +77,4 @@ def clear_chat_history():
     return jsonify({"status": "Chat history cleared"})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host="localhost", port=5000, debug=True)

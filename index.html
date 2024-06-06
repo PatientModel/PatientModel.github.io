@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Chat</title>
+    <title>PM-14B Patient Model</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -37,20 +37,46 @@
         }
         .message {
             margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
         }
         .user {
-            font-weight: bold;
+            background-color: #d1e7dd;
+            text-align: right;
+        }
+        .assistant {
+            background-color: #f8d7da;
+            text-align: left;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px;
+            margin: 10px 5px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Medical Chat</h1>
+        <h1>PM-14B Patient Model</h1>
     </header>
     <main>
         <div id="chat-container">
             <div id="messages"></div>
-            <input type="text" id="user-input" placeholder="Type your message here">
+            <textarea type="text" id="user-input" placeholder="请在这里输入内容，作为医生，第一句话应该问“您好，请问您有哪里不舒服？”，按Shift+Enter换行，Enter发送" ></textarea>
             <button onclick="sendMessage()">Send</button>
             <button onclick="clearChat()">Clear Chat</button>
             <button onclick="startQuestions()">Start Questions</button>
@@ -59,15 +85,12 @@
     <script>
         let messages = [];
 
+        // 修改 sendMessage 函数
         async function sendMessage() {
             const userInput = document.getElementById('user-input').value;
             if (userInput.trim() === '') return;
 
-            const messageContainer = document.createElement('div');
-            messageContainer.className = 'message user';
-            messageContainer.textContent = `User: ${userInput}`;
-            document.getElementById('messages').appendChild(messageContainer);
-
+            addMessage('user', userInput);
             document.getElementById('user-input').value = '';
 
             messages.push({ role: 'user', content: userInput });
@@ -81,14 +104,11 @@
             });
 
             const data = await response.json();
-
-            const botMessageContainer = document.createElement('div');
-            botMessageContainer.className = 'message bot';
-            botMessageContainer.textContent = `Bot: ${data.reply}`;
-            document.getElementById('messages').appendChild(botMessageContainer);
+            addMessage('assistant', data.reply);
 
             messages = data.messages;
         }
+
 
         async function clearChat() {
             const response = await fetch('http://localhost:5000/api/clear', {
@@ -108,7 +128,6 @@
         async function startQuestions() {
             const response = await fetch('http://localhost:5000/api/questions');
             const data = await response.json();
-
             displayQuestions(data.questions, data.chief_complaint, data.past_history);
         }
 
@@ -121,25 +140,52 @@
                 [questions[3]]: past_history
             };
             let answers = {};
-
+        
             function askQuestion() {
                 if (questionIndex < questions.length) {
                     const question = questions[questionIndex];
-                    const userAnswer = prompt(question);
-                    if (userAnswer !== null) {
-                        answers[question] = userAnswer;
-                        questionIndex++;
-                        askQuestion();
-                    }
+                    addMessage('assistant', question);
+                    const inputField = document.createElement('input');
+                    inputField.type = 'text';
+                    inputField.id = `question-${questionIndex}`;
+                    inputField.placeholder = 'Type your answer here';
+                    inputField.onkeypress = function (e) {
+                        if (e.key === 'Enter') {
+                            const userAnswer = e.target.value;
+                            answers[question] = userAnswer;
+                            addMessage('user', userAnswer);
+                            questionIndex++;
+                            document.getElementById('messages').removeChild(inputField);
+                            askQuestion();
+                        }
+                    };
+                    document.getElementById('messages').appendChild(inputField);
+                    inputField.focus();
                 } else {
-                    alert("所有问题都回答完毕。");
-                    console.log("对话记录和回答：", answers);
-                    console.log("正确答案：", correctAnswers);
+                    addMessage('assistant', "所有问题都回答完毕。");
+                    addMessage('assistant', "对话记录和回答：" + JSON.stringify(answers));
+                    addMessage('assistant', "正确答案：" + JSON.stringify(correctAnswers));
                 }
             }
-
+        
             askQuestion();
         }
+
+        function addMessage(role, content) {
+            const messageContainer = document.createElement('div');
+            messageContainer.className = `message ${role}`;
+            messageContainer.textContent = content;
+            document.getElementById('messages').appendChild(messageContainer);
+            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+        }
+        document.getElementById('user-input').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            } else if (event.key === 'Enter' && event.shiftKey) {
+                // 允许换行，不做任何处理
+            }
+        });
     </script>
 </body>
 </html>
