@@ -1,86 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PM-14B Patient Model</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #FFC107; /* 黄色主色调 */
-            color: black;
-            padding: 10px 0;
-            text-align: center;
-        }
-        main {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            height: 90vh; /* 调整高度以便布局 */
-        }
-        #chat-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-        #messages {
-            flex: 1;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-        .message {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .user {
-            background-color: #d1e7dd;
-            text-align: right;
-        }
-        .assistant {
-            background-color: #f8d7da;
-            text-align: left;
-        }
-        textarea {
-            width: calc(100% - 22px); /* 调整宽度使其占据一行 */
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            resize: none; /* 禁止手动调整大小 */
-        }
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-        }
-        button {
-            padding: 10px;
-            margin: 10px 5px;
-            border: none;
-            background-color: #FFC107; /* 黄色主色调 */
-            color: black;
-            border-radius: 5px;
-            cursor: pointer;
-            flex: 1;
-        }
-        button:hover {
-            background-color: #FFA000;
-        }
-    </style>
-</head>
+    <head>
+        <meta charset="UTF-8"> <!-- 设置文档字符编码为UTF-8 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 设置视口，以确保在不同设备上显示良好 -->
+        <title>PM-14B Patient Model</title> <!-- 设置网页标题 -->
+        <style>
+            body {
+                font-family: Arial, sans-serif; /* 设置页面字体为Arial，后备字体为sans-serif */
+                background-color: #f4f4f4; /* 设置页面背景颜色为浅灰色 */
+                color: #333; /* 设置文本颜色为深灰色 */
+                margin: 0; /* 去掉页面的默认外边距 */
+                padding: 0; /* 去掉页面的默认内边距 */
+            }
+            header {
+                background-color: #FFC107; /* 黄色主色调 */
+                color: black; /* 设置标题文本颜色为黑色 */
+                padding: 10px 0; /* 设置标题上下内边距为10px */
+                text-align: center; /* 设置标题文本居中 */
+            }
+            main {
+                padding: 20px; /* 设置主内容区域的内边距为20px */
+                display: flex; /* 使用flexbox布局 */
+                flex-direction: column; /* 设置flexbox布局方向为列方向 */
+                height: 90vh; /* 设置主内容区域的高度为视口高度的90% */
+            }
+            #chat-container {
+                max-width: 1200px; /* 设置聊天容器的最大宽度为800px */
+                margin: 0 auto; /* 设置聊天容器水平居中 */
+                background: white; /* 设置聊天容器背景颜色为白色 */
+                padding: 20px; /* 设置聊天容器的内边距为20px */
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 设置聊天容器的阴影效果 */
+                display: flex; /* 使用flexbox布局 */
+                flex-direction: column; /* 设置flexbox布局方向为列方向 */
+                flex: 1; /* 使聊天容器在父容器中占据可用空间 */
+            }
+            #messages {
+                flex: 1; /* 使消息容器在父容器中占据可用空间 */
+                overflow-y: auto; /* 使消息容器在垂直方向上滚动 */
+                border: 1px solid #ccc; /* 设置消息容器的边框颜色为浅灰色 */
+                padding: 10px; /* 设置消息容器的内边距为10px */
+                margin-bottom: 10px; /* 设置消息容器的下外边距为10px */
+            }
+            .message {
+                margin: 10px 0; /* 设置消息项的上下外边距为10px */
+                padding: 10px; /* 设置消息项的内边距为10px */
+                border-radius: 5px; /* 设置消息项的圆角半径为5px */
+            }
+            .user {
+                background-color: #d1e7dd; /* 设置用户消息背景颜色为浅绿色 */
+                text-align: right; /* 设置用户消息文本右对齐 */
+            }
+            .assistant {
+                background-color: #f8d7da; /* 设置助手消息背景颜色为浅红色 */
+                text-align: left; /* 设置助手消息文本左对齐 */
+            }
+            textarea {
+                width: calc(100% - 22px); /* 调整宽度使其占据一行 */
+                padding: 10px; /* 设置输入框的内边距为10px */
+                margin: 10px 0; /* 设置输入框的上下外边距为10px */
+                border: 1px solid #ccc; /* 设置输入框的边框颜色为浅灰色 */
+                border-radius: 5px; /* 设置输入框的圆角半径为5px */
+                resize: none; /* 禁止手动调整大小 */
+            }
+            .button-container {
+                display: flex; /* 使用flexbox布局 */
+                justify-content: space-between; /* 在按钮之间留出空间 */
+            }
+            button {
+                padding: 10px; /* 设置按钮的内边距为10px */
+                margin: 10px 5px; /* 设置按钮的上下外边距为10px，左右外边距为5px */
+                border: none; /* 去掉按钮的边框 */
+                background-color: #FFC107; /* 设置按钮背景颜色为黄色 */
+                color: black; /* 设置按钮文本颜色为黑色 */
+                border-radius: 5px; /* 设置按钮的圆角半径为5px */
+                cursor: pointer; /* 设置鼠标指针悬停在按钮上时的样式 */
+                flex: 1; /* 使按钮在父容器中均匀分布 */
+            }
+            button:hover {
+                background-color: #FFA000; /* 设置按钮悬停时的背景颜色为较暗的黄色 */
+            }
+        </style>
+    </head>
+    
 <body>
     <header>
         <h1>PM-14B Patient Model</h1>
