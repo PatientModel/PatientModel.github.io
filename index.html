@@ -13,13 +13,16 @@
             padding: 0;
         }
         header {
-            background-color: #4CAF50;
-            color: white;
+            background-color: #FFEB3B; /* 黄色主色调 */
+            color: black;
             padding: 10px 0;
             text-align: center;
         }
         main {
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 90vh; /* 调整高度以便布局 */
         }
         #chat-container {
             max-width: 600px;
@@ -27,10 +30,13 @@
             background: white;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
         #messages {
-            height: 300px;
-            overflow-y: scroll;
+            flex: 1;
+            overflow-y: auto;
             border: 1px solid #ccc;
             padding: 10px;
             margin-bottom: 10px;
@@ -48,24 +54,30 @@
             background-color: #f8d7da;
             text-align: left;
         }
-        input[type="text"] {
-            width: 80%;
+        textarea {
+            width: calc(100% - 22px); /* 调整宽度使其占据一行 */
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
+            resize: none; /* 禁止手动调整大小 */
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
         }
         button {
             padding: 10px;
             margin: 10px 5px;
             border: none;
-            background-color: #4CAF50;
-            color: white;
+            background-color: #FFEB3B; /* 黄色主色调 */
+            color: black;
             border-radius: 5px;
             cursor: pointer;
+            flex: 1;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #FFD700;
         }
     </style>
 </head>
@@ -76,16 +88,17 @@
     <main>
         <div id="chat-container">
             <div id="messages"></div>
-            <textarea type="text" id="user-input" placeholder="请在这里输入内容，作为医生，第一句话应该问“您好，请问您有哪里不舒服？”，按Shift+Enter换行，Enter发送" ></textarea>
-            <button onclick="sendMessage()">Send</button>
-            <button onclick="clearChat()">Clear Chat</button>
-            <button onclick="startQuestions()">Start Questions</button>
+            <textarea id="user-input" placeholder="请在这里输入内容，作为医生，第一句话应该问“您好，请问您有哪里不舒服？”，按Shift+Enter换行，Enter发送"></textarea>
+            <div class="button-container">
+                <button onclick="sendMessage()">Send</button>
+                <button onclick="clearChat()">Clear Chat</button>
+                <button onclick="startQuestions()">Start Questions</button>
+            </div>
         </div>
     </main>
     <script>
         let messages = [];
 
-        // 修改 sendMessage 函数
         async function sendMessage() {
             const userInput = document.getElementById('user-input').value;
             if (userInput.trim() === '') return;
@@ -108,7 +121,6 @@
 
             messages = data.messages;
         }
-
 
         async function clearChat() {
             const response = await fetch('http://localhost:5000/api/clear', {
@@ -140,7 +152,7 @@
                 [questions[3]]: past_history
             };
             let answers = {};
-        
+
             function askQuestion() {
                 if (questionIndex < questions.length) {
                     const question = questions[questionIndex];
@@ -167,7 +179,7 @@
                     addMessage('assistant', "正确答案：" + JSON.stringify(correctAnswers));
                 }
             }
-        
+
             askQuestion();
         }
 
@@ -178,6 +190,7 @@
             document.getElementById('messages').appendChild(messageContainer);
             document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
         }
+
         document.getElementById('user-input').addEventListener('keydown', function(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
