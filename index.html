@@ -21,6 +21,26 @@
         main {
             padding: 20px;
         }
+        #chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #messages {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin: 10px 0;
+        }
+        .user {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -28,7 +48,39 @@
         <h1>Welcome to My GitHub Pages Site</h1>
     </header>
     <main>
-        <p>This is a simple HTML page hosted on GitHub Pages.</p>
+        <div id="chat-container">
+            <div id="messages"></div>
+            <input type="text" id="user-input" placeholder="Type your message here">
+            <button onclick="sendMessage()">Send</button>
+        </div>
     </main>
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            if (userInput.trim() === '') return;
+
+            const messageContainer = document.createElement('div');
+            messageContainer.className = 'message user';
+            messageContainer.textContent = `User: ${userInput}`;
+            document.getElementById('messages').appendChild(messageContainer);
+
+            document.getElementById('user-input').value = '';
+
+            const response = await fetch('http://localhost:5000/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: userInput })
+            });
+
+            const data = await response.json();
+
+            const botMessageContainer = document.createElement('div');
+            botMessageContainer.className = 'message bot';
+            botMessageContainer.textContent = `Bot: ${data.reply}`;
+            document.getElementById('messages').appendChild(botMessageContainer);
+        }
+    </script>
 </body>
 </html>
