@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My GitHub Pages Site</title>
+    <title>Medical Chat</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,16 +45,20 @@
 </head>
 <body>
     <header>
-        <h1>Welcome to My GitHub Pages Site</h1>
+        <h1>Medical Chat</h1>
     </header>
     <main>
         <div id="chat-container">
             <div id="messages"></div>
             <input type="text" id="user-input" placeholder="Type your message here">
             <button onclick="sendMessage()">Send</button>
+            <button onclick="clearChat()">Clear Chat</button>
+            <button onclick="startQuestions()">Start Questions</button>
         </div>
     </main>
     <script>
+        let messages = [];
+
         async function sendMessage() {
             const userInput = document.getElementById('user-input').value;
             if (userInput.trim() === '') return;
@@ -66,12 +70,14 @@
 
             document.getElementById('user-input').value = '';
 
+            messages.push({ role: 'user', content: userInput });
+
             const response = await fetch('http://localhost:5000/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ message: userInput })
+                body: JSON.stringify({ prompt: userInput, messages })
             });
 
             const data = await response.json();
@@ -80,6 +86,59 @@
             botMessageContainer.className = 'message bot';
             botMessageContainer.textContent = `Bot: ${data.reply}`;
             document.getElementById('messages').appendChild(botMessageContainer);
+
+            messages = data.messages;
+        }
+
+        async function clearChat() {
+            const response = await fetch('http://localhost:5000/api/clear', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            if (data.status === "Chat history cleared") {
+                messages = [];
+                document.getElementById('messages').innerHTML = '';
+            }
+        }
+
+        async function startQuestions() {
+            const response = await fetch('http://localhost:5000/api/questions');
+            const data = await response.json();
+
+            displayQuestions(data.questions, data.chief_complaint, data.past_history);
+        }
+
+        function displayQuestions(questions, chief_complaint, past_history) {
+            let questionIndex = 0;
+            const correctAnswers = {
+                [questions[0]]: "",
+                [questions[1]]: "",
+                [questions[2]]: chief_complaint,
+                [questions[3]]: past_history
+            };
+            let answers = {};
+
+            function askQuestion() {
+                if (questionIndex < questions.length) {
+                    const question = questions[questionIndex];
+                    const userAnswer = prompt(question);
+                    if (userAnswer !== null) {
+                        answers[question] = userAnswer;
+                        questionIndex++;
+                        askQuestion();
+                    }
+                } else {
+                    alert("所有问题都回答完毕。");
+                    console.log("对话记录和回答：", answers);
+                    console.log("正确答案：", correctAnswers);
+                }
+            }
+
+            askQuestion();
         }
     </script>
 </body>
