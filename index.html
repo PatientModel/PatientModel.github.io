@@ -11,61 +11,35 @@
             color: #333;
             margin: 0;
             padding: 0;
-            display: flex;
         }
         header {
             background-color: #FFC107; /* 调整为较暗的黄色 */
             color: black;
-            padding: 10px 20px; /* 增加左右内边距 */
-            text-align: left; /* 设置标题文本左对齐 */
-            width: 100%; /* 宽度为100% */
-            box-sizing: border-box; /* 包含内边距和边框在内的宽度 */
-            position: fixed; /* 固定定位 */
-            top: 0; /* 顶部位置为0 */
-            left: 0; /* 左侧位置为0 */
-        }
-        .sidebar {
-            width: 200px; /* 侧边栏宽度 */
-            background-color: #333;
-            color: white;
-            height: 100vh; /* 高度为视口高度 */
-            position: fixed; /* 固定定位 */
-            top: 0; /* 顶部位置为0 */
-            left: 0; /* 左侧位置为0 */
-            padding-top: 60px; /* 确保侧边栏内容不被header覆盖 */
-            box-sizing: border-box; /* 包含内边距和边框在内的宽度 */
-            overflow-y: auto; /* 垂直方向滚动 */
-        }
-        .sidebar a {
-            display: block;
-            color: white;
-            padding: 16px;
-            text-decoration: none;
-        }
-        .sidebar a:hover {
-            background-color: #575757;
+            padding: 10px 0;
+            text-align: center;
         }
         main {
-            margin-left: 200px; /* 确保主内容区域在侧边栏右侧 */
             padding: 20px;
-            flex: 1;
-            overflow-y: auto;
-            margin-top: 60px; /* 确保内容不被固定的header覆盖 */
-            box-sizing: border-box; /* 包含内边距和边框在内的宽度 */
+            display: flex;
+            flex-direction: column;
+            height: 90vh; /* 调整高度以便布局 */
+            align-items: center; /* 水平居中对齐 */
         }
         #chat-container {
-            width: 100%;
+            width: 80%; /* 调整为较宽的聊天框，使用百分比来适应不同屏幕 */
+            max-width: 1000px; /* 设置最大宽度为1000px */
+            margin: 0 auto;
             background: white;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             flex: 1;
-            border: none; /* 隐藏显著的聊天框边框 */
         }
         #messages {
             flex: 1;
             overflow-y: auto;
+            border: 1px solid #ccc;
             padding: 10px;
             margin-bottom: 10px;
         }
@@ -83,7 +57,7 @@
             text-align: left;
         }
         textarea {
-            width: 100%;
+            width: calc(100% - 22px); /* 调整宽度使其占据一行 */
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
@@ -113,12 +87,6 @@
     <header>
         <h1>PM-14B Patient Model</h1>
     </header>
-    <div class="sidebar">
-        <a href="#section1">Section 1</a>
-        <a href="#section2">Section 2</a>
-        <a href="#section3">Section 3</a>
-        <!-- 添加更多侧边栏内容 -->
-    </div>
     <main>
         <div id="chat-container">
             <div id="messages"></div>
@@ -249,4 +217,6 @@
         });
     </script>
 </body>
+</html>
+<!-- Path: PatientModel.github.io/index.html -->
 </html>
