@@ -43,7 +43,7 @@ def chat():
 
     message = [
         {"role": "system", "content": patient_system_prompt},
-        {"role": "user", "content": str(messages)}
+        {"role": "user", "content": prompt}
     ]
     text = pipeline.tokenizer.apply_chat_template(
         message,
@@ -94,4 +94,4 @@ def refresh_data():
     })
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
