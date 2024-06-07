@@ -13,20 +13,27 @@
                 padding: 0; /* 去掉页面的默认内边距 */
             }
             header {
-                background-color: #FFC107; /* 黄色主色调 */
-                color: black; /* 设置标题文本颜色为黑色 */
-                padding: 10px 0; /* 设置标题上下内边距为10px */
-                text-align: center; /* 设置标题文本居中 */
+                background-color: #FFC107; /* 调整为较暗的黄色 */
+                color: black;
+                padding: 10px 20px; /* 增加左右内边距 */
+                text-align: left; /* 设置标题文本左对齐 */
+                position: fixed; /* 固定定位 */
+                top: 0; /* 顶部位置为0 */
+                left: 0; /* 左侧位置为0 */
+                width: 100%; /* 宽度为100% */
+                box-sizing: border-box; /* 包含内边距和边框在内的宽度 */
             }
             main {
-                padding: 20px; /* 设置主内容区域的内边距为20px */
-                display: flex; /* 使用flexbox布局 */
-                flex-direction: column; /* 设置flexbox布局方向为列方向 */
-                height: 90vh; /* 设置主内容区域的高度为视口高度的90% */
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                height: 90vh; /* 调整高度以便布局 */
+                align-items: center; /* 水平居中对齐 */
+                margin-top: 60px; /* 确保内容不被固定的header覆盖 */
             }
             #chat-container {
                 width: 60%;
-                max-width: 1200px; /* 设置聊天容器的最大宽度为800px */
+                max-width: 1000px; /* 设置聊天容器的最大宽度为800px */
                 margin: 0 auto; /* 设置聊天容器水平居中 */
                 background: white; /* 设置聊天容器背景颜色为白色 */
                 padding: 20px; /* 设置聊天容器的内边距为20px */
@@ -145,14 +152,18 @@
             const data = await response.json();
             displayQuestions(data.questions, data.chief_complaint, data.past_history);
         }
-        
+
         async function refreshData() {
             const response = await fetch('http://localhost:5000/api/refresh', {
                 method: 'POST'
             });
 
             const data = await response.json();
-            alert("Data refreshed. New questions loaded.");
+            if (data.status === "Data refreshed") {
+                messages = []; // 清空消息数组
+                document.getElementById('messages').innerHTML = ''; // 清空消息容器
+                alert("Data refreshed. New questions loaded.");
+            }
         }
 
         function displayQuestions(questions, chief_complaint, past_history) {
