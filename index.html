@@ -25,7 +25,7 @@
                 height: 90vh; /* 设置主内容区域的高度为视口高度的90% */
             }
             #chat-container {
-                width: 80%;
+                width: 60%;
                 max-width: 1200px; /* 设置聊天容器的最大宽度为800px */
                 margin: 0 auto; /* 设置聊天容器水平居中 */
                 background: white; /* 设置聊天容器背景颜色为白色 */
@@ -95,6 +95,7 @@
                 <button onclick="sendMessage()">Send</button>
                 <button onclick="clearChat()">Clear Chat</button>
                 <button onclick="startQuestions()">Start Questions</button>
+                <button onclick="refreshData()">Refresh Data</button> <!-- 新增刷新按钮 -->
             </div>
         </div>
     </main>
@@ -144,12 +145,21 @@
             const data = await response.json();
             displayQuestions(data.questions, data.chief_complaint, data.past_history);
         }
+        
+        async function refreshData() {
+            const response = await fetch('http://localhost:5000/api/refresh', {
+                method: 'POST'
+            });
+
+            const data = await response.json();
+            alert("Data refreshed. New questions loaded.");
+        }
 
         function displayQuestions(questions, chief_complaint, past_history) {
             let questionIndex = 0;
             const correctAnswers = {
-                [questions[0]]: "",
-                [questions[1]]: "",
+                [questions[0]]: "ABC为错误选项，其他均为正确选项",
+                [questions[1]]: "ABC为错误选项，其他均为正确选项",
                 [questions[2]]: chief_complaint,
                 [questions[3]]: past_history
             };
