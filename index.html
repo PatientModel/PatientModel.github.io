@@ -5,13 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PM-14B Patient Model</title>
     <style>
-        /* 你的样式代码 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        header {
+            background-color: #FFC107; /* 调整为较暗的黄色 */
+            color: black;
+            padding: 10px 20px; /* 增加左右内边距 */
+            text-align: left; /* 设置标题文本左对齐 */
+            width: 100%; /* 宽度为100% */
+            box-sizing: border-box; /* 包含内边距和边框在内的宽度 */
+            position: fixed; /* 固定定位 */
+            top: 0; /* 顶部位置为0 */
+            left: 0; /* 左侧位置为0 */
+        }
+        .sidebar {
+            width: 200px; /* 侧边栏宽度 */
+            background-color: #333;
+            color: white;
+            height: 100vh; /* 高度为视口高度 */
+            position: fixed; /* 固定定位 */
+            top: 0; /* 顶部位置为0 */
+            left: 0; /* 左侧位置为0 */
+            padding-top: 60px; /* 确保侧边栏内容不被header覆盖 */
+            box-sizing: border-box; /* 包含内边距和边框在内的宽度 */
+            overflow-y: auto; /* 垂直方向滚动 */
+        }
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 16px;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+        main {
+            margin-left: 200px; /* 确保主内容区域在侧边栏右侧 */
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            margin-top: 60px; /* 确保内容不被固定的header覆盖 */
+            box-sizing: border-box; /* 包含内边距和边框在内的宽度 */
+        }
+        #chat-container {
+            width: 100%;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            border: none; /* 隐藏显著的聊天框边框 */
+        }
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .user {
+            background-color: #d1e7dd;
+            text-align: right;
+        }
+        .assistant {
+            background-color: #f8d7da;
+            text-align: left;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none; /* 禁止手动调整大小 */
+        }
+        .button-container {
+            display: flex; /* 使用flexbox布局 */
+            justify-content: space-between; /* 在按钮之间留出空间 */
+        }
+        button {
+            padding: 10px;
+            margin: 10px 5px;
+            border: none;
+            background-color: #FFC107; /* 调整为较暗的黄色 */
+            color: black;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+        }
+        button:hover {
+            background-color: #FFA000; /* 调整为较暗的悬停颜色 */
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>PM-14B Patient Model</h1>
     </header>
+    <div class="sidebar">
+        <a href="#section1">Section 1</a>
+        <a href="#section2">Section 2</a>
+        <a href="#section3">Section 3</a>
+        <!-- 添加更多侧边栏内容 -->
+    </div>
     <main>
         <div id="chat-container">
             <div id="messages"></div>
@@ -78,8 +185,8 @@
 
             const data = await response.json();
             if (data.status === "Data refreshed") {
-                messages = [];
-                document.getElementById('messages').innerHTML = '';
+                messages = []; // 清空消息数组
+                document.getElementById('messages').innerHTML = ''; // 清空消息容器
                 alert("Data refreshed. New questions loaded.");
             }
         }
@@ -87,8 +194,8 @@
         function displayQuestions(questions, chief_complaint, past_history) {
             let questionIndex = 0;
             const correctAnswers = {
-                [questions[0]]: "ABC为错误选项，其他均为正确选项",
-                [questions[1]]: "ABC为错误选项，其他均为正确选项",
+                [questions[0]]: "",
+                [questions[1]]: "",
                 [questions[2]]: chief_complaint,
                 [questions[3]]: past_history
             };
