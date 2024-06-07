@@ -41,6 +41,9 @@ def chat():
     messages = data['messages']
     prompt = data['prompt']
 
+    app.logger.info(f"Received messages: {messages}")
+    app.logger.info(f"Received prompt: {prompt}")
+
     message = [
         {"role": "system", "content": patient_system_prompt},
         {"role": "user", "content": prompt}
@@ -50,6 +53,8 @@ def chat():
         tokenize=False,
         add_generation_prompt=True
     )
+    app.logger.info(f"Generated text for pipeline: {text}")
+
     terminators = [
         pipeline.tokenizer.eos_token_id,
         pipeline.tokenizer.convert_tokens_to_ids("")
@@ -65,6 +70,8 @@ def chat():
     )
     response = outputs[0]["generated_text"][len(text):]
 
+    app.logger.info(f"Generated response: {response}")
+
     messages.append({"role": "user", "content": prompt})
     messages.append({"role": "assistant", "content": response})
 
@@ -72,6 +79,7 @@ def chat():
 
 @app.route('/api/questions', methods=['GET'])
 def get_questions():
+    app.logger.info("Questions endpoint accessed.")
     return jsonify({
         "questions": questions,
         "chief_complaint": chief_complaint,
@@ -80,12 +88,14 @@ def get_questions():
 
 @app.route('/api/clear', methods=['POST'])
 def clear_chat_history():
+    app.logger.info("Chat history cleared.")
     return jsonify({"status": "Chat history cleared"})
 
 @app.route('/api/refresh', methods=['POST'])
 def refresh_data():
     global patient_system_prompt, questions, chief_complaint, past_history
     patient_system_prompt, questions, chief_complaint, past_history = load_data()
+    app.logger.info("Data refreshed.")
     return jsonify({
         "status": "Data refreshed",
         "questions": questions,

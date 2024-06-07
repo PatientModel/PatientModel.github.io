@@ -1,97 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8"> <!-- 设置文档字符编码为UTF-8 -->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 设置视口，以确保在不同设备上显示良好 -->
-        <title>PM-14B Patient Model</title> <!-- 设置网页标题 -->
-        <style>
-            body {
-                font-family: Arial, sans-serif; /* 设置页面字体为Arial，后备字体为sans-serif */
-                background-color: #f4f4f4; /* 设置页面背景颜色为浅灰色 */
-                color: #333; /* 设置文本颜色为深灰色 */
-                margin: 0; /* 去掉页面的默认外边距 */
-                padding: 0; /* 去掉页面的默认内边距 */
-            }
-            header {
-                background-color: #FFC107; /* 调整为较暗的黄色 */
-                color: black;
-                padding: 10px 20px; /* 增加左右内边距 */
-                text-align: left; /* 设置标题文本左对齐 */
-                position: fixed; /* 固定定位 */
-                top: 0; /* 顶部位置为0 */
-                left: 0; /* 左侧位置为0 */
-                width: 25%; /* 宽度为20% */
-                box-sizing: border-box; /* 包含内边距和边框在内的宽度 */
-            }
-            main {
-                padding: 20px;
-                display: flex;
-                flex-direction: column;
-                height: 90vh; /* 调整高度以便布局 */
-                align-items: center; /* 水平居中对齐 */
-                margin-top: 60px; /* 确保内容不被固定的header覆盖 */
-                margin-left: 30%; /* 确保主内容与标题头对齐 */
-            }
-            #chat-container {
-                width: 60%;
-                max-width: 1000px; /* 设置聊天容器的最大宽度为800px */
-                /*margin: 0 auto; /* 设置聊天容器水平居中 */
-                background: white; /* 设置聊天容器背景颜色为白色 */
-                padding: 20px; /* 设置聊天容器的内边距为20px */
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 设置聊天容器的阴影效果 */
-                display: flex; /* 使用flexbox布局 */
-                flex-direction: column; /* 设置flexbox布局方向为列方向 */
-                flex: 1; /* 使聊天容器在父容器中占据可用空间 */
-                margin-left: -55%; /* 确保主内容与标题头对齐 */
-            }
-            #messages {
-                flex: 1; /* 使消息容器在父容器中占据可用空间 */
-                overflow-y: auto; /* 使消息容器在垂直方向上滚动 */
-                border: 1px solid #ccc; /* 设置消息容器的边框颜色为浅灰色 */
-                padding: 10px; /* 设置消息容器的内边距为10px */
-                margin-bottom: 10px; /* 设置消息容器的下外边距为10px */
-            }
-            .message {
-                margin: 10px 0; /* 设置消息项的上下外边距为10px */
-                padding: 10px; /* 设置消息项的内边距为10px */
-                border-radius: 5px; /* 设置消息项的圆角半径为5px */
-            }
-            .user {
-                background-color: #d1e7dd; /* 设置用户消息背景颜色为浅绿色 */
-                text-align: right; /* 设置用户消息文本右对齐 */
-            }
-            .assistant {
-                background-color: #f8d7da; /* 设置助手消息背景颜色为浅红色 */
-                text-align: left; /* 设置助手消息文本左对齐 */
-            }
-            textarea {
-                width: calc(100% - 22px); /* 调整宽度使其占据一行 */
-                padding: 10px; /* 设置输入框的内边距为10px */
-                margin: 10px 0; /* 设置输入框的上下外边距为10px */
-                border: 1px solid #ccc; /* 设置输入框的边框颜色为浅灰色 */
-                border-radius: 5px; /* 设置输入框的圆角半径为5px */
-                resize: none; /* 禁止手动调整大小 */
-            }
-            .button-container {
-                display: flex; /* 使用flexbox布局 */
-                justify-content: space-between; /* 在按钮之间留出空间 */
-            }
-            button {
-                padding: 10px; /* 设置按钮的内边距为10px */
-                margin: 10px 5px; /* 设置按钮的上下外边距为10px，左右外边距为5px */
-                border: none; /* 去掉按钮的边框 */
-                background-color: #FFC107; /* 设置按钮背景颜色为黄色 */
-                color: black; /* 设置按钮文本颜色为黑色 */
-                border-radius: 5px; /* 设置按钮的圆角半径为5px */
-                cursor: pointer; /* 设置鼠标指针悬停在按钮上时的样式 */
-                flex: 1; /* 使按钮在父容器中均匀分布 */
-            }
-            button:hover {
-                background-color: #FFA000; /* 设置按钮悬停时的背景颜色为较暗的黄色 */
-            }
-        </style>
-    </head>
-    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PM-14B Patient Model</title>
+    <style>
+        /* 你的样式代码 */
+    </style>
+</head>
 <body>
     <header>
         <h1>PM-14B Patient Model</h1>
@@ -120,7 +36,7 @@
 
             messages.push({ role: 'user', content: userInput });
 
-            const response = await fetch('http://localhost:5000/api/chat', {
+            const response = await fetch('http://10.1.0.69:5000/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -135,7 +51,7 @@
         }
 
         async function clearChat() {
-            const response = await fetch('http://localhost:5000/api/clear', {
+            const response = await fetch('http://10.1.0.69:5000/api/clear', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -150,20 +66,20 @@
         }
 
         async function startQuestions() {
-            const response = await fetch('http://localhost:5000/api/questions');
+            const response = await fetch('http://10.1.0.69:5000/api/questions');
             const data = await response.json();
             displayQuestions(data.questions, data.chief_complaint, data.past_history);
         }
 
         async function refreshData() {
-            const response = await fetch('http://localhost:5000/api/refresh', {
+            const response = await fetch('http://10.1.0.69:5000/api/refresh', {
                 method: 'POST'
             });
 
             const data = await response.json();
             if (data.status === "Data refreshed") {
-                messages = []; // 清空消息数组
-                document.getElementById('messages').innerHTML = ''; // 清空消息容器
+                messages = [];
+                document.getElementById('messages').innerHTML = '';
                 alert("Data refreshed. New questions loaded.");
             }
         }
