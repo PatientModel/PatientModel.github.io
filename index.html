@@ -11,65 +11,83 @@
                 color: #333; /* 设置文本颜色为深灰色 */
                 margin: 0; /* 去掉页面的默认外边距 */
                 padding: 0; /* 去掉页面的默认内边距 */
+                display: flex;/* 使用flexbox布局 */
             }
             header {
                 background-color: #FFC107; /* 调整为较暗的黄色 */
                 color: black;
                 padding: 10px 20px; /* 增加左右内边距 */
                 text-align: left; /* 设置标题文本左对齐 */
+                width: 100%; /* 宽度为100% */
+                box-sizing: border-box; /* 包含内边距和边框在内的宽度 */
                 position: fixed; /* 固定定位 */
                 top: 0; /* 顶部位置为0 */
                 left: 0; /* 左侧位置为0 */
-                width: 25%; /* 宽度为20% */
+            }
+            .sidebar {
+                width: 200px; /* 侧边栏宽度 */
+                background-color: #333;
+                color: white;
+                height: 100vh; /* 高度为视口高度 */
+                position: fixed; /* 固定定位 */
+                top: 0; /* 顶部位置为0 */
+                left: 0; /* 左侧位置为0 */
+                padding-top: 60px; /* 确保侧边栏内容不被header覆盖 */
                 box-sizing: border-box; /* 包含内边距和边框在内的宽度 */
+                overflow-y: auto; /* 垂直方向滚动 */
+            }
+            .sidebar a {
+                display: block;
+                color: white;
+                padding: 16px;
+                text-decoration: none;
+            }
+            .sidebar a:hover {
+                background-color: #575757;
             }
             main {
+                margin-left: 200px; /* 确保主内容区域在侧边栏右侧 */
                 padding: 20px;
-                display: flex;
-                flex-direction: column;
-                height: 90vh; /* 调整高度以便布局 */
-                align-items: center; /* 水平居中对齐 */
+                flex: 1;
+                overflow-y: auto;
                 margin-top: 60px; /* 确保内容不被固定的header覆盖 */
-                margin-left: 30%; /* 确保主内容与标题头对齐 */
+                box-sizing: border-box; /* 包含内边距和边框在内的宽度 */
             }
             #chat-container {
-                width: 60%;
-                max-width: 1000px; /* 设置聊天容器的最大宽度为800px */
-                /*margin: 0 auto; /* 设置聊天容器水平居中 */
-                background: white; /* 设置聊天容器背景颜色为白色 */
-                padding: 20px; /* 设置聊天容器的内边距为20px */
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 设置聊天容器的阴影效果 */
-                display: flex; /* 使用flexbox布局 */
-                flex-direction: column; /* 设置flexbox布局方向为列方向 */
-                flex: 1; /* 使聊天容器在父容器中占据可用空间 */
-                margin-left: -55%; /* 确保主内容与标题头对齐 */
+                width: 100%;
+                background: white;
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                border: none; /* 隐藏显著的聊天框边框 */
             }
             #messages {
-                flex: 1; /* 使消息容器在父容器中占据可用空间 */
-                overflow-y: auto; /* 使消息容器在垂直方向上滚动 */
-                border: 1px solid #ccc; /* 设置消息容器的边框颜色为浅灰色 */
-                padding: 10px; /* 设置消息容器的内边距为10px */
-                margin-bottom: 10px; /* 设置消息容器的下外边距为10px */
+                flex: 1;
+                overflow-y: auto;
+                padding: 10px;
+                margin-bottom: 10px;
             }
             .message {
-                margin: 10px 0; /* 设置消息项的上下外边距为10px */
-                padding: 10px; /* 设置消息项的内边距为10px */
-                border-radius: 5px; /* 设置消息项的圆角半径为5px */
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 5px;
             }
             .user {
-                background-color: #d1e7dd; /* 设置用户消息背景颜色为浅绿色 */
-                text-align: right; /* 设置用户消息文本右对齐 */
+                background-color: #d1e7dd;
+                text-align: right;
             }
             .assistant {
-                background-color: #f8d7da; /* 设置助手消息背景颜色为浅红色 */
-                text-align: left; /* 设置助手消息文本左对齐 */
+                background-color: #f8d7da;
+                text-align: left;
             }
             textarea {
-                width: calc(100% - 22px); /* 调整宽度使其占据一行 */
-                padding: 10px; /* 设置输入框的内边距为10px */
-                margin: 10px 0; /* 设置输入框的上下外边距为10px */
-                border: 1px solid #ccc; /* 设置输入框的边框颜色为浅灰色 */
-                border-radius: 5px; /* 设置输入框的圆角半径为5px */
+                width: 100%;
+                padding: 10px;
+                margin: 10px 0;
+                border: 1px solid #ccc;
+                border-radius: 5px;
                 resize: none; /* 禁止手动调整大小 */
             }
             .button-container {
@@ -96,6 +114,12 @@
     <header>
         <h1>PM-14B Patient Model</h1>
     </header>
+    <div class="sidebar">
+        <a href="#section1">Section 1</a>
+        <a href="#section2">Section 2</a>
+        <a href="#section3">Section 3</a>
+        <!-- 添加更多侧边栏内容 -->
+    </div>
     <main>
         <div id="chat-container">
             <div id="messages"></div>
@@ -171,8 +195,8 @@
         function displayQuestions(questions, chief_complaint, past_history) {
             let questionIndex = 0;
             const correctAnswers = {
-                [questions[0]]: "ABC为错误选项，其他均为正确选项",
-                [questions[1]]: "ABC为错误选项，其他均为正确选项",
+                [questions[0]]: "",
+                [questions[1]]: "",
                 [questions[2]]: chief_complaint,
                 [questions[3]]: past_history
             };
