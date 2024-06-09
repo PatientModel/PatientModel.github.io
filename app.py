@@ -26,7 +26,7 @@ def load_data():
     return patient_system_prompt, questions, data["chief_complaint"], data["past_history"]
 
 # Initialize pipeline
-pipeline = pipeline("text-generation", model="/data/changye/models/Qwen-14B_pm_10k", model_kwargs={"torch_dtype": torch.bfloat16}, device_map="auto")
+pipeline = pipeline("text-generation", model="/data/changye/model/PM-14B-10k", model_kwargs={"torch_dtype": torch.bfloat16}, device_map="auto")
 
 # Load initial data
 patient_system_prompt, questions, chief_complaint, past_history = load_data()

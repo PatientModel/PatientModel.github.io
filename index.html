@@ -11,30 +11,33 @@
             color: #333;
             margin: 0;
             padding: 0;
+            display: flex;
+        }
+        #sidebar {
+            width: 20%;
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        #sidebar h2 {
+            color: #ecf0f1;
+        }
+        #chat-container {
+            width: 80%;
+            margin: 0;
+            background: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
         }
         header {
-            background-color: #FFC107; /* 调整为较暗的黄色 */
+            background-color: #FFC107;
             color: black;
             padding: 10px 0;
             text-align: center;
-        }
-        main {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            height: 90vh; /* 调整高度以便布局 */
-            align-items: center; /* 水平居中对齐 */
-        }
-        #chat-container {
-            width: 80%; /* 调整为较宽的聊天框，使用百分比来适应不同屏幕 */
-            max-width: 1000px; /* 设置最大宽度为1000px */
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            flex: 1;
         }
         #messages {
             flex: 1;
@@ -57,50 +60,91 @@
             text-align: left;
         }
         textarea {
-            width: calc(100% - 22px); /* 调整宽度使其占据一行 */
+            width: calc(100% - 22px);
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
-            resize: none; /* 禁止手动调整大小 */
+            resize: none;
         }
         .button-container {
-            display: flex; /* 使用flexbox布局 */
-            justify-content: space-between; /* 在按钮之间留出空间 */
+            display: flex;
+            justify-content: space-between;
         }
         button {
             padding: 10px;
             margin: 10px 5px;
             border: none;
-            background-color: #FFC107; /* 调整为较暗的黄色 */
+            background-color: #FFC107;
             color: black;
             border-radius: 5px;
             cursor: pointer;
             flex: 1;
         }
         button:hover {
-            background-color: #FFA000; /* 调整为较暗的悬停颜色 */
+            background-color: #FFA000;
+        }
+        .chat-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #34495e;
+            cursor: pointer;
+        }
+        .chat-item:hover {
+            background-color: #1abc9c;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>PM-14B Patient Model</h1>
-    </header>
-    <main>
-        <div id="chat-container">
-            <div id="messages"></div>
-            <textarea id="user-input" placeholder="请在这里输入内容，作为医生，第一句话应该问“您好，请问您有哪里不舒服？”，按Shift+Enter换行，Enter发送"></textarea>
-            <div class="button-container">
-                <button onclick="sendMessage()">Send</button>
-                <button onclick="clearChat()">Clear Chat</button>
-                <button onclick="startQuestions()">Start Questions</button>
-                <button onclick="refreshData()">Refresh Data</button> <!-- 新增刷新按钮 -->
-            </div>
+    <div id="sidebar">
+        <h2>Chats</h2>
+        <div id="chat-list"></div>
+        <button onclick="startNewChat()">New Chat</button>
+    </div>
+    <div id="chat-container">
+        <header>
+            <h1>PM-14B Patient Model</h1>
+        </header>
+        <div id="messages"></div>
+        <textarea id="user-input" placeholder="请在这里输入内容，按Shift+Enter换行，Enter发送"></textarea>
+        <div class="button-container">
+            <button onclick="sendMessage()">Send</button>
+            <button onclick="clearChat()">Clear Chat</button>
         </div>
-    </main>
+    </div>
     <script>
-        let messages = [];
+        let currentChatId = null;
+        let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+
+        function loadChatHistory() {
+            const chatList = document.getElementById('chat-list');
+            chatList.innerHTML = '';
+            chatHistory.forEach((chat, index) => {
+                const chatItem = document.createElement('div');
+                chatItem.className = 'chat-item';
+                chatItem.textContent = `Chat ${index + 1}`;
+                chatItem.onclick = () => loadChat(index);
+                chatList.appendChild(chatItem);
+            });
+        }
+
+        function loadChat(index) {
+            currentChatId = index;
+            const chat = chatHistory[index];
+            const chatContainer = document.getElementById('messages');
+            chatContainer.innerHTML = '';
+            chat.messages.forEach(msg => {
+                addMessage(msg.role, msg.content);
+            });
+        }
+
+        function startNewChat() {
+            currentChatId = chatHistory.length;
+            chatHistory.push({ messages: [] });
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            loadChatHistory();
+            loadChat(currentChatId);
+        }
 
         async function sendMessage() {
             const userInput = document.getElementById('user-input').value;
@@ -109,94 +153,31 @@
             addMessage('user', userInput);
             document.getElementById('user-input').value = '';
 
-            messages.push({ role: 'user', content: userInput });
+            const currentChat = chatHistory[currentChatId];
+            currentChat.messages.push({ role: 'user', content: userInput });
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
 
             const response = await fetch('http://localhost:5000/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ prompt: userInput, messages })
+                body: JSON.stringify({ prompt: userInput, messages: currentChat.messages })
             });
 
             const data = await response.json();
             addMessage('assistant', data.reply);
 
-            messages = data.messages;
+            currentChat.messages.push({ role: 'assistant', content: data.reply });
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
         }
 
-        async function clearChat() {
-            const response = await fetch('http://localhost:5000/api/clear', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            const data = await response.json();
-            if (data.status === "Chat history cleared") {
-                messages = [];
+        function clearChat() {
+            if (currentChatId !== null) {
+                chatHistory[currentChatId].messages = [];
+                localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
                 document.getElementById('messages').innerHTML = '';
             }
-        }
-
-        async function startQuestions() {
-            const response = await fetch('http://localhost:5000/api/questions');
-            const data = await response.json();
-            displayQuestions(data.questions, data.chief_complaint, data.past_history);
-        }
-
-        async function refreshData() {
-            const response = await fetch('http://localhost:5000/api/refresh', {
-                method: 'POST'
-            });
-
-            const data = await response.json();
-            if (data.status === "Data refreshed") {
-                messages = []; // 清空消息数组
-                document.getElementById('messages').innerHTML = ''; // 清空消息容器
-                alert("Data refreshed. New questions loaded.");
-            }
-        }
-
-        function displayQuestions(questions, chief_complaint, past_history) {
-            let questionIndex = 0;
-            const correctAnswers = {
-                [questions[0]]: "ABC为错误选项，其他选项均正确",
-                [questions[1]]: "ABC为错误选项，其他选项均正确",
-                [questions[2]]: chief_complaint,
-                [questions[3]]: past_history
-            };
-            let answers = {};
-
-            function askQuestion() {
-                if (questionIndex < questions.length) {
-                    const question = questions[questionIndex];
-                    addMessage('assistant', question);
-                    const inputField = document.createElement('input');
-                    inputField.type = 'text';
-                    inputField.id = `question-${questionIndex}`;
-                    inputField.placeholder = 'Type your answer here';
-                    inputField.onkeypress = function (e) {
-                        if (e.key === 'Enter') {
-                            const userAnswer = e.target.value;
-                            answers[question] = userAnswer;
-                            addMessage('user', userAnswer);
-                            questionIndex++;
-                            document.getElementById('messages').removeChild(inputField);
-                            askQuestion();
-                        }
-                    };
-                    document.getElementById('messages').appendChild(inputField);
-                    inputField.focus();
-                } else {
-                    addMessage('assistant', "所有问题都回答完毕。");
-                    addMessage('assistant', "对话记录和回答：" + JSON.stringify(answers));
-                    addMessage('assistant', "正确答案：" + JSON.stringify(correctAnswers));
-                }
-            }
-
-            askQuestion();
         }
 
         function addMessage(role, content) {
@@ -211,12 +192,11 @@
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
                 sendMessage();
-            } else if (event.key === 'Enter' && event.shiftKey) {
-                // 允许换行，不做任何处理
             }
         });
+
+        // 页面加载时恢复聊天记录
+        document.addEventListener('DOMContentLoaded', loadChatHistory);
     </script>
 </body>
-</html>
-<!-- Path: PatientModel.github.io/index.html -->
 </html>
