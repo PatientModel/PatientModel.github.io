@@ -119,6 +119,7 @@
             margin-top: 10px;
         }
     </style>
+    <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default"></script>
 </head>
 <body>
     <div id="sidebar">
@@ -160,6 +161,11 @@
                 `;
                 chatList.appendChild(chatItem);
             });
+
+            // If there is no current chat selected, select the first chat by default
+            if (currentChatId === null && chatHistory.length > 0) {
+                loadChat(0);
+            }
         }
 
         function loadChat(index) {
@@ -183,27 +189,33 @@
         async function sendMessage() {
             const userInput = document.getElementById('user-input').value;
             if (userInput.trim() === '') return;
-
+        
             addMessage('user', userInput);
             document.getElementById('user-input').value = '';
-
+        
             const currentChat = chatHistory[currentChatId];
             currentChat.messages.push({ role: 'user', content: userInput });
             localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-
-            const response = await fetch('http://localhost:5000/api/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ prompt: userInput, messages: currentChat.messages })
-            });
-
-            const data = await response.json();
-            addMessage('assistant', data.reply);
-
-            currentChat.messages.push({ role: 'assistant', content: data.reply });
-            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            console.log('Sending API request...');
+            try {
+                const response = await fetch('http://localhost:5000/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt: userInput, messages: currentChat.messages })
+                });
+        
+                const data = await response.json();
+                console.log('API response received:', data);
+        
+                addMessage('assistant', data.reply);
+                currentChat.messages.push({ role: 'assistant', content: data.reply });
+                localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            } catch (error) {
+                console.error('API request failed:', error);
+                alert('API request failed: ' + error.message);
+            }
         }
 
         function clearChat() {
