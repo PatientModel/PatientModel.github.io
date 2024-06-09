@@ -151,7 +151,18 @@
     <script>
         let currentChatId = null;
         let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
-
+        
+        function highlightSelectedChat() {
+            const chatItems = document.querySelectorAll('.chat-item');
+            chatItems.forEach((item, index) => {
+                if (index === currentChatId) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+        
         function loadChatHistory() {
             const chatList = document.getElementById('chat-list');
             chatList.innerHTML = '';
