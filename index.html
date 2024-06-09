@@ -185,10 +185,16 @@
             loadChatHistory();
             loadChat(currentChatId);
         }
+        
 
         async function sendMessage() {
             const userInput = document.getElementById('user-input').value;
             if (userInput.trim() === '') return;
+        
+            // 如果没有当前聊天，创建一个新的聊天
+            if (currentChatId === null) {
+                startNewChat();
+            }
         
             addMessage('user', userInput);
             document.getElementById('user-input').value = '';
@@ -217,6 +223,7 @@
                 alert('API request failed: ' + error.message);
             }
         }
+        
 
         function clearChat() {
             if (currentChatId !== null) {
