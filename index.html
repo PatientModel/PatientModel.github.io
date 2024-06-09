@@ -176,7 +176,7 @@
                 const chatItem = document.createElement('div');
                 chatItem.className = 'chat-item';
                 chatItem.innerHTML = `
-                    <span onclick="loadChat(${index})">Chat ${index + 1}</span>
+                    <span onclick="selectChat(${index})">Chat ${index + 1}</span>
                     <button onclick="deleteChat(${index})">Delete</button>
                 `;
                 chatList.appendChild(chatItem);
