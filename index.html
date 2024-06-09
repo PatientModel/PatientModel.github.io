@@ -19,7 +19,9 @@
             color: white;
             padding: 10px;
             height: 100vh;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* 保证底部说明文本框固定在底部 */
         }
         #sidebar h2 {
             color: #ecf0f1;
@@ -97,7 +99,8 @@
             background-color: #1abc9c;
         }
         .chat-item button {
-            padding: 5px 10px;
+            padding: 2px 5px;  /* 调整为合适的大小 */
+            font-size: 12px;  /* 设置字体大小 */
             background-color: red;
             color: white;
             border: none;
@@ -107,13 +110,25 @@
         .chat-item button:hover {
             background-color: darkred;
         }
+        #description {
+            padding: 10px;
+            background-color: #34495e;
+            border-radius: 5px;
+            color: #ecf0f1;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div id="sidebar">
-        <h2>Chats</h2>
-        <div id="chat-list"></div>
-        <button onclick="startNewChat()">New Chat</button>
+        <div>
+            <h2>Chats</h2>
+            <div id="chat-list"></div>
+            <button onclick="startNewChat()">New Chat</button>
+        </div>
+        <div id="description">
+            <p>这里是一些静态说明文字。你可以在这里添加更多信息。</p>
+        </div>
     </div>
     <div id="chat-container">
         <header>
