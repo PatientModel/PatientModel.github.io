@@ -110,6 +110,8 @@
         <div class="button-container">
             <button onclick="sendMessage()">Send</button>
             <button onclick="clearChat()">Clear Chat</button>
+            <button onclick="startQuestions()">Start Questions</button>
+            <button onclick="refreshData()">Refresh Data</button>
         </div>
     </div>
     <script>
@@ -178,6 +180,68 @@
                 localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
                 document.getElementById('messages').innerHTML = '';
             }
+        }
+
+        async function startQuestions() {
+            const response = await fetch('http://localhost:5000/api/questions');
+            const data = await response.json();
+            displayQuestions(data.questions, data.chief_complaint, data.past_history);
+        }
+
+        async function refreshData() {
+            const response = await fetch('http://localhost:5000/api/refresh', {
+                method: 'POST'
+            });
+
+            const data = await response.json();
+            if (data.status === "Data refreshed") {
+                chatHistory = []; // 清空聊天记录
+                currentChatId = null;
+                localStorage.removeItem('chatHistory');
+                document.getElementById('messages').innerHTML = ''; // 清空消息容器
+                loadChatHistory(); // 重新加载聊天记录列表
+                alert("Data refreshed. New questions loaded.");
+            }
+        }
+
+        function displayQuestions(questions, chief_complaint, past_history) {
+            let questionIndex = 0;
+            const correctAnswers = {
+                [questions[0]]: "ABC为错误选项，其他选项均正确",
+                [questions[1]]: "ABC为错误选项，其他选项均正确",
+                [questions[2]]: chief_complaint,
+                [questions[3]]: past_history
+            };
+            let answers = {};
+
+            function askQuestion() {
+                if (questionIndex < questions.length) {
+                    const question = questions[questionIndex];
+                    addMessage('assistant', question);
+                    const inputField = document.createElement('input');
+                    inputField.type = 'text';
+                    inputField.id = `question-${questionIndex}`;
+                    inputField.placeholder = 'Type your answer here';
+                    inputField.onkeypress = function (e) {
+                        if (e.key === 'Enter') {
+                            const userAnswer = e.target.value;
+                            answers[question] = userAnswer;
+                            addMessage('user', userAnswer);
+                            questionIndex++;
+                            document.getElementById('messages').removeChild(inputField);
+                            askQuestion();
+                        }
+                    };
+                    document.getElementById('messages').appendChild(inputField);
+                    inputField.focus();
+                } else {
+                    addMessage('assistant', "所有问题都回答完毕。");
+                    addMessage('assistant', "对话记录和回答：" + JSON.stringify(answers));
+                    addMessage('assistant', "正确答案：" + JSON.stringify(correctAnswers));
+                }
+            }
+
+            askQuestion();
         }
 
         function addMessage(role, content) {
