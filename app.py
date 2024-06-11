@@ -51,7 +51,8 @@ def chat():
             "patient_system_prompt": patient_system_prompt,
             "questions": questions,
             "chief_complaint": chief_complaint,
-            "past_history": past_history
+            "past_history": past_history,
+            "messages": []
         }
     else:
         patient_system_prompt = chat_data[chat_id]["patient_system_prompt"]
@@ -84,10 +85,11 @@ def chat():
 
     app.logger.info(f"Generated response: {response}")
 
-    messages.append({"role": "user", "content": prompt})
-    messages.append({"role": "assistant", "content": response})
+    chat_data[chat_id]["messages"].append({"role": "user", "content": prompt})
+    chat_data[chat_id]["messages"].append({"role": "assistant", "content": response})
 
-    return jsonify({'reply': response, 'messages': messages})
+    return jsonify({'reply': response, 'messages': chat_data[chat_id]["messages"]})
+
 
 @app.route('/api/questions', methods=['POST'])
 def get_questions():
@@ -116,6 +118,7 @@ def get_questions():
         "past_history": past_history
     })
 
+
 @app.route('/api/refresh', methods=['POST'])
 def refresh_data():
     data = request.get_json()
@@ -128,7 +131,8 @@ def refresh_data():
         "patient_system_prompt": patient_system_prompt,
         "questions": questions,
         "chief_complaint": chief_complaint,
-        "past_history": past_history
+        "past_history": past_history,
+        "messages": []
     }
 
     return jsonify({
@@ -137,6 +141,7 @@ def refresh_data():
         "chief_complaint": chief_complaint,
         "past_history": past_history
     })
+
 
 @app.route('/api/clear', methods=['POST'])
 def clear_chat_history():
