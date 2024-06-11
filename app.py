@@ -29,7 +29,7 @@ def load_data():
 pipeline = pipeline("text-generation", model="/data/changye/model/PM-14B-10k", model_kwargs={"torch_dtype": torch.bfloat16}, device_map="auto")
 
 # Load initial data
-patient_system_prompt, questions, chief_complaint, past_history = load_data()
+chat_data = {}
 
 @app.route('/')
 def index():
@@ -38,11 +38,23 @@ def index():
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json()
+    chat_id = data.get('chatId')
     messages = data['messages']
     prompt = data['prompt']
 
-    app.logger.info(f"Received messages: {messages}")
+    app.logger.info(f"Received messages for chat {chat_id}: {messages}")
     app.logger.info(f"Received prompt: {prompt}")
+
+    if chat_id not in chat_data:
+        patient_system_prompt, questions, chief_complaint, past_history = load_data()
+        chat_data[chat_id] = {
+            "patient_system_prompt": patient_system_prompt,
+            "questions": questions,
+            "chief_complaint": chief_complaint,
+            "past_history": past_history
+        }
+    else:
+        patient_system_prompt = chat_data[chat_id]["patient_system_prompt"]
 
     message = [
         {"role": "system", "content": patient_system_prompt},
@@ -77,10 +89,50 @@ def chat():
 
     return jsonify({'reply': response, 'messages': messages})
 
-@app.route('/api/questions', methods=['GET'])
+@app.route('/api/questions', methods=['POST'])
 def get_questions():
-    app.logger.info("Questions endpoint accessed.")
+    data = request.get_json()
+    chat_id = data.get('chatId')
+    messages = data.get('messages')
+
+    app.logger.info(f"Questions endpoint accessed for chat {chat_id}.")
+
+    if chat_id not in chat_data:
+        patient_system_prompt, questions, chief_complaint, past_history = load_data()
+        chat_data[chat_id] = {
+            "patient_system_prompt": patient_system_prompt,
+            "questions": questions,
+            "chief_complaint": chief_complaint,
+            "past_history": past_history
+        }
+    else:
+        questions = chat_data[chat_id]["questions"]
+        chief_complaint = chat_data[chat_id]["chief_complaint"]
+        past_history = chat_data[chat_id]["past_history"]
+
     return jsonify({
+        "questions": questions,
+        "chief_complaint": chief_complaint,
+        "past_history": past_history
+    })
+
+@app.route('/api/refresh', methods=['POST'])
+def refresh_data():
+    data = request.get_json()
+    chat_id = data.get('chatId')
+
+    app.logger.info(f"Data refresh requested for chat {chat_id}.")
+
+    patient_system_prompt, questions, chief_complaint, past_history = load_data()
+    chat_data[chat_id] = {
+        "patient_system_prompt": patient_system_prompt,
+        "questions": questions,
+        "chief_complaint": chief_complaint,
+        "past_history": past_history
+    }
+
+    return jsonify({
+        "status": "Data refreshed",
         "questions": questions,
         "chief_complaint": chief_complaint,
         "past_history": past_history
@@ -90,18 +142,6 @@ def get_questions():
 def clear_chat_history():
     app.logger.info("Chat history cleared.")
     return jsonify({"status": "Chat history cleared"})
-
-@app.route('/api/refresh', methods=['POST'])
-def refresh_data():
-    global patient_system_prompt, questions, chief_complaint, past_history
-    patient_system_prompt, questions, chief_complaint, past_history = load_data()
-    app.logger.info("Data refreshed.")
-    return jsonify({
-        "status": "Data refreshed",
-        "questions": questions,
-        "chief_complaint": chief_complaint,
-        "past_history": past_history
-    })
 
 if __name__ == '__main__':
     app.run(host='localhost', port=5000, debug=True)

@@ -261,26 +261,49 @@
         }
 
         async function startQuestions() {
-            const response = await fetch('https://ad05-74-48-69-112.ngrok-free.app/api/questions');
+            if (currentChatId === null) {
+                alert('Please select a chat first.');
+                return;
+            }
+        
+            const currentChat = chatHistory[currentChatId];
+        
+            const response = await fetch('https://ad05-74-48-69-112.ngrok-free.app/api/questions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ chatId: currentChatId, messages: currentChat.messages })
+            });
             const data = await response.json();
             displayQuestions(data.questions, data.chief_complaint, data.past_history);
         }
+        
 
         async function refreshData() {
+            if (currentChatId === null) {
+                alert('Please select a chat first.');
+                return;
+            }
+        
             const response = await fetch('https://ad05-74-48-69-112.ngrok-free.app/api/refresh', {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ chatId: currentChatId })
             });
-
+        
             const data = await response.json();
             if (data.status === "Data refreshed") {
-                chatHistory = []; // 清空聊天记录
-                currentChatId = null;
-                localStorage.removeItem('chatHistory');
+                chatHistory[currentChatId].messages = []; // 清空当前聊天记录
+                localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
                 document.getElementById('messages').innerHTML = ''; // 清空消息容器
-                loadChatHistory(); // 重新加载聊天记录列表
+                loadChat(currentChatId); // 重新加载当前聊天记录
                 alert("Data refreshed. New questions loaded.");
             }
         }
+        
 
         function displayQuestions(questions, chief_complaint, past_history) {
             let questionIndex = 0;
