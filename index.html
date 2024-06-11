@@ -231,7 +231,7 @@
             localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
             console.log('Sending API request...');
             try {
-                const response = await fetch('https://ad05-74-48-69-112.ngrok-free.app/api/chat', {
+                const response = await fetch('https://23cb-74-48-69-112.ngrok-free.app/api/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -268,7 +268,7 @@
         
             const currentChat = chatHistory[currentChatId];
         
-            const response = await fetch('https://ad05-74-48-69-112.ngrok-free.app/api/questions', {
+            const response = await fetch('https://23cb-74-48-69-112.ngrok-free.app/api/questions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -286,7 +286,7 @@
                 return;
             }
         
-            const response = await fetch('https://ad05-74-48-69-112.ngrok-free.app/api/refresh', {
+            const response = await fetch('https://23cb-74-48-69-112.ngrok-free.app/api/refresh', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
