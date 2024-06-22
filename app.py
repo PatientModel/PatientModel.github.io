@@ -31,7 +31,7 @@ def load_data():
     systolic_blood_pressure = data['systolic blood pressure']
     diastolic_blood_pressure = data['diastolic blood pressure']
     patient_system_prompt = PATIENT_SYSTEM_PROMPT.format(past_history=past_history, chief_complaint=chief_complaint,gender=gender,age=age,personal_history=personal_history,height=height,weight=weight,temperature=temperature,heart_rate=heart_rate,respiratory_rate=respiratory_rate,systolic_blood_pressure=systolic_blood_pressure,diastolic_blood_pressure=diastolic_blood_pressure)
-    print(patient_system_prompt)
+    # print(patient_system_prompt)
     questions = [
         "请从以下科室中选择一个你认为患者最有可能进入的科室," + str(data["department_single_question"]) + ",请仅输出该科室前的大写字母(如A、B、C等)。",
         "请从以下疾病中选择至多三个你认为患者最有可能患有的疾病" + str(data["disease_multi_question"]) + ",请仅输出这些科室前的大写字母(如ABD、BE、CDEF等)。",
