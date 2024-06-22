@@ -19,7 +19,6 @@ def load_data():
     index=data['index']
     past_history = data['past_history']
     chief_complaint = data['chief_complaint']
-    dialogue = data['dialogue']  # is not None
     gender = data['gender']
     age = data['age']
     personal_history = data['personal history']
