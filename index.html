@@ -341,19 +341,19 @@
             const patientInfoContainer = document.getElementById('patient-info');
             patientInfoContainer.innerHTML = `
                 <h3>Patient Info</h3>
-                <p>Index: ${patientInfo.index}</p>
-                <p>Past History: ${patientInfo.past_history}</p>
-                <p>Chief Complaint: ${patientInfo.chief_complaint}</p>
-                <p>Gender: ${patientInfo.gender}</p>
-                <p>Age: ${patientInfo.age}</p>
-                <p>Personal History: ${patientInfo.personal_history}</p>
-                <p>Height: ${patientInfo.height}</p>
-                <p>Weight: ${patientInfo.weight}</p>
-                <p>Temperature: ${patientInfo.temperature}</p>
-                <p>Heart Rate: ${patientInfo.heart_rate}</p>
-                <p>Respiratory Rate: ${patientInfo.respiratory_rate}</p>
-                <p>Systolic Blood Pressure: ${patientInfo.systolic_blood_pressure}</p>
-                <p>Diastolic Blood Pressure: ${patientInfo.diastolic_blood_pressure}</p>
+                <p>Index: ${patientInfo.index || 'N/A'}</p>
+                <p>Past History: ${patientInfo.past_history || 'N/A'}</p>
+                <p>Chief Complaint: ${patientInfo.chief_complaint || 'N/A'}</p>
+                <p>Gender: ${patientInfo.gender || 'N/A'}</p>
+                <p>Age: ${patientInfo.age || 'N/A'}</p>
+                <p>Personal History: ${patientInfo.personal_history || 'N/A'}</p>
+                <p>Height: ${patientInfo.height || 'N/A'}</p>
+                <p>Weight: ${patientInfo.weight || 'N/A'}</p>
+                <p>Temperature: ${patientInfo.temperature || 'N/A'}</p>
+                <p>Heart Rate: ${patientInfo.heart_rate || 'N/A'}</p>
+                <p>Respiratory Rate: ${patientInfo.respiratory_rate || 'N/A'}</p>
+                <p>Systolic Blood Pressure: ${patientInfo.systolic_blood_pressure || 'N/A'}</p>
+                <p>Diastolic Blood Pressure: ${patientInfo.diastolic_blood_pressure || 'N/A'}</p>
             `;
         }
 
