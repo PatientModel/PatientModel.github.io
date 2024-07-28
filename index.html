@@ -285,7 +285,7 @@
                 body: JSON.stringify({ chatId: currentChatId, messages: currentChat.messages })
             });
             const data = await response.json();
-            displayQuestions(data.questions, data.chief_complaint, data.past_history);
+            displayQuestions(data.questions, data.present_illness, data.past_history);
             updatePatientInfo(data);
         }
         
@@ -321,7 +321,7 @@
             const patientInfo = {
                 index: data.index,
                 past_history: data.past_history,
-                chief_complaint: data.chief_complaint,
+                present_illness: data.present_illness,
                 gender: data.gender,
                 age: data.age,
                 personal_history: data.personal_history,
@@ -344,7 +344,7 @@
                 <h3>Patient Info</h3>
                 <p>Index: ${patientInfo.index || 'N/A'}</p>
                 <p>Past History: ${patientInfo.past_history || 'N/A'}</p>
-                <p>Chief Complaint: ${patientInfo.chief_complaint || 'N/A'}</p>
+                <p>Chief Complaint: ${patientInfo.present_illness || 'N/A'}</p>
                 <p>Gender: ${patientInfo.gender || 'N/A'}</p>
                 <p>Age: ${patientInfo.age || 'N/A'}</p>
                 <p>Personal History: ${patientInfo.personal_history || 'N/A'}</p>

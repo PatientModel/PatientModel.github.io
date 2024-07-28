@@ -10,7 +10,7 @@ CORS(app)
 
 # Constants
 TEST_DATA_PATH = "/data/changye/hospital/data/test_data/formal_2_test_dataset.json"
-PATIENT_SYSTEM_PROMPT = ("假设你是一个病人，你的过去病史是{past_history}，你的现病史是{chief_complaint}，"
+PATIENT_SYSTEM_PROMPT = ("假设你是一个病人，你的过去病史是{past_history}，你的现病史是{present_illness}，"
                          "你的性别是{gender}，年龄是{age}岁，个人史是{personal_history}，身高是{height}厘米，"
                          "体重是{weight}公斤，体温是{temperature}度，心率是{heart_rate}次/分钟，"
                          "呼吸频次是{respiratory_rate}次/分钟，收缩压是{systolic_blood_pressure}毫米汞柱，"
@@ -25,7 +25,7 @@ def load_data():
     data = random.choice(dataset)
     patient_system_prompt = PATIENT_SYSTEM_PROMPT.format(
         past_history=data['past_history'],
-        chief_complaint=data['chief_complaint'],
+        present_illness=data['present_illness'],
         gender=data['gender'],
         age=data['age'],
         personal_history=data['personal history'],
@@ -46,7 +46,7 @@ def load_data():
     return {
         "patient_system_prompt": patient_system_prompt,
         "questions": questions,
-        "chief_complaint": data["chief_complaint"],
+        "present_illness": data["present_illness"],
         "past_history": data["past_history"],
         "index": data['index'],
         "gender": data['gender'],
@@ -66,7 +66,7 @@ def initialize_chat_data(chat_id):
     chat_data[chat_id] = {
         "patient_system_prompt": data["patient_system_prompt"],
         "questions": data["questions"],
-        "chief_complaint": data["chief_complaint"],
+        "present_illness": data["present_illness"],
         "past_history": data["past_history"],
         "index": data["index"],
         "gender": data["gender"],
@@ -156,7 +156,7 @@ def get_questions():
 
     return jsonify({
         "questions": chat_info["questions"],
-        "chief_complaint": chat_info["chief_complaint"],
+        "present_illness": chat_info["present_illness"],
         "past_history": chat_info["past_history"],
         "index": chat_info["index"],
         "gender": chat_info["gender"],
@@ -183,7 +183,7 @@ def refresh_data():
     return jsonify({
         "status": "Data refreshed",
         "questions": chat_info["questions"],
-        "chief_complaint": chat_info["chief_complaint"],
+        "present_illness": chat_info["present_illness"],
         "past_history": chat_info["past_history"],
         "index": chat_info["index"],
         "gender": chat_info["gender"],
