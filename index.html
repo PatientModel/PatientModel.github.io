@@ -212,13 +212,19 @@
         async function startNewChat() {
             currentChatId = chatHistory.length;
             try {
+                console.log('Sending request to fetch new patient data...');
                 const response = await fetch('https://b0ca-211-81-48-249.ngrok-free.app/api/newpatient', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
+                console.log('Request sent, awaiting response...');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
+                console.log('Response received:', data);
                 const newPatientInfo = {
                     index: data.index,
                     past_history: data.past_history,
